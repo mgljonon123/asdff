@@ -4,10 +4,12 @@
 <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
+        <title>Amra — Music</title>
         <link rel="stylesheet" href="./home.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -60,6 +62,10 @@
 
 
                 <div class="right">
+                        <section class="search-results-section" id="searchResultsSection">
+                                <h2 class="section-title">Search results</h2>
+                                <div class="new"></div>
+                        </section>
                         <div class="ner">
                                 <h1>Hip-hop</h1>
                         </div>
@@ -195,7 +201,7 @@
 
                                         <div class="duu">
                                                 <img class="hiphop"
-                                                        src="https://i.ytimg.com/vi/Ktw1Wbf9Cmo/hq720.jpg?sqp=-oaymwFBCNAFEJQDSFryq4qpAzMIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB8AEB-AH-CYACyAWKAgwIABABGHIgOSg5MA8=&rs=AOn4CLCVKHY3iKLZHB_NuHRlPNZm4AXEdw"" alt="">
+                                                        src="https://i.ytimg.com/vi/Ktw1Wbf9Cmo/hq720.jpg?sqp=-oaymwFBCNAFEJQDSFryq4qpAzMIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB8AEB-AH-CYACyAWKAgwIABABGHIgOSg5MA8=&rs=AOn4CLCVKHY3iKLZHB_NuHRlPNZm4AXEdw" alt="">
                                                         <h1>Chamguigeer/</h1>
                                                         <h2>Bojuna ft Temka</h2>
                                                         <i></i>
@@ -245,7 +251,31 @@
                                 </div>
                         </div>
 
+                </div>
+        </div>
 
+        <!-- Bottom music player (iTunes API) -->
+        <div class="player-bar">
+                <div class="player-left">
+                        <img class="player-artwork" src="https://via.placeholder.com/60x60?text=♪" alt="Artwork">
+                        <div class="player-text">
+                                <span class="player-title">Nothing playing</span>
+                                <span class="player-artist">Search and click a song</span>
+                        </div>
+                </div>
+                <div class="player-center">
+                        <button class="player-btn" id="playerPlayPause" aria-label="Play / Pause">
+                                <i class="fa-solid fa-play"></i>
+                        </button>
+                </div>
+                <div class="player-right">
+                        <div class="player-progress">
+                                <div class="player-progress-fill"></div>
+                        </div>
+                </div>
+        </div>
+
+        <script src="./music-library.js"></script>
 </body>
 
 </html>
