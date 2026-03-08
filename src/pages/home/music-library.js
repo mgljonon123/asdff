@@ -15,6 +15,9 @@ const playerProgressFill = document.querySelector(".player-progress-fill");
 
 let currentPreviewUrl = null;
 let currentTrackDurationMs = 0;
+let currentPlaylist = []; // playable .duu cards in current view
+let currentTrackIndex = -1;
+let volumeBeforeMute = 1;
 const API_BASE = "https://itunes.apple.com/search"; // api data avna itunes
 
 // Storage keys
@@ -418,6 +421,21 @@ if (searchInput && resultsContainer) {
     const previewUrl = card.dataset.preview;
     if (!previewUrl) return;
 
+    // Build playlist from same container (search / saved / favorites)
+    const container =
+      card.closest(".new") ||
+      card.closest(".saved-tracks-container") ||
+      card.closest(".favorites-container");
+    if (container) {
+      currentPlaylist = Array.from(
+        container.querySelectorAll(".duu[data-preview]"),
+      ).filter((el) => el.dataset.preview && el.dataset.preview.trim() !== "");
+      currentTrackIndex = currentPlaylist.indexOf(card);
+    } else {
+      currentPlaylist = [card];
+      currentTrackIndex = 0;
+    }
+
     currentTrackDurationMs = parseInt(card.dataset.durationMs, 10) || 0;
 
     const imgEl = card.querySelector("img");
@@ -443,6 +461,71 @@ if (searchInput && resultsContainer) {
     if (playerArtist) playerArtist.textContent = artistText;
 
     previewAudio.play().then(updatePlayPauseIcon).catch(console.error);
+  }
+
+  // Play a track card (used by prev/next and auto-next)
+  function playTrackCard(card) {
+    if (!card) return;
+    const previewUrl = card.dataset.preview;
+    if (!previewUrl) return;
+    currentPreviewUrl = previewUrl;
+    currentTrackDurationMs = parseInt(card.dataset.durationMs, 10) || 0;
+    previewAudio.src = previewUrl;
+    const imgEl = card.querySelector("img");
+    const titleEl = card.querySelector("h1");
+    const artistEl = card.querySelector("h2");
+    if (playerArtwork) playerArtwork.src = (imgEl && imgEl.getAttribute("src")) || "";
+    if (playerTitle) playerTitle.textContent = (titleEl && titleEl.textContent) || "Unknown Title";
+    if (playerArtist) playerArtist.textContent = (artistEl && artistEl.textContent) || "Unknown Artist";
+    previewAudio.play().then(updatePlayPauseIcon).catch(console.error);
+  }
+
+  const playerPrevBtn = document.getElementById("playerPrev");
+  const playerNextBtn = document.getElementById("playerNext");
+  if (playerPrevBtn) {
+    playerPrevBtn.addEventListener("click", () => {
+      if (currentPlaylist.length === 0) return;
+      currentTrackIndex = (currentTrackIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
+      playTrackCard(currentPlaylist[currentTrackIndex]);
+    });
+  }
+  if (playerNextBtn) {
+    playerNextBtn.addEventListener("click", () => {
+      if (currentPlaylist.length === 0) return;
+      currentTrackIndex = (currentTrackIndex + 1) % currentPlaylist.length;
+      playTrackCard(currentPlaylist[currentTrackIndex]);
+    });
+  }
+
+  // Volume
+  const playerVolume = document.getElementById("playerVolume");
+  const playerVolumeBtn = document.getElementById("playerVolumeBtn");
+  const playerVolumeIcon = document.getElementById("playerVolumeIcon");
+  if (playerVolume) {
+    playerVolume.addEventListener("input", () => {
+      const v = parseInt(playerVolume.value, 10) / 100;
+      previewAudio.volume = v;
+      if (playerVolumeIcon) {
+        playerVolumeIcon.classList.remove("fa-volume-high", "fa-volume-low", "fa-volume-off");
+        playerVolumeIcon.classList.add(v === 0 ? "fa-volume-off" : v < 0.5 ? "fa-volume-low" : "fa-volume-high");
+      }
+    });
+  }
+  if (playerVolumeBtn && playerVolumeIcon) {
+    playerVolumeBtn.addEventListener("click", () => {
+      if (previewAudio.volume > 0) {
+        volumeBeforeMute = previewAudio.volume;
+        previewAudio.volume = 0;
+        if (playerVolume) playerVolume.value = 0;
+        playerVolumeIcon.classList.remove("fa-volume-high", "fa-volume-low");
+        playerVolumeIcon.classList.add("fa-volume-off");
+      } else {
+        previewAudio.volume = volumeBeforeMute;
+        if (playerVolume) playerVolume.value = Math.round(volumeBeforeMute * 100);
+        playerVolumeIcon.classList.remove("fa-volume-off");
+        playerVolumeIcon.classList.add(volumeBeforeMute < 0.5 ? "fa-volume-low" : "fa-volume-high");
+      }
+    });
   }
 
   if (playerPlayPauseBtn) {
@@ -472,6 +555,12 @@ if (searchInput && resultsContainer) {
   previewAudio.addEventListener("ended", () => {
     if (playerProgressFill) playerProgressFill.style.width = "0%";
     updatePlayPauseIcon();
+    // Auto-advance to next track if we have a playlist
+    if (currentPlaylist.length > 0) {
+      const nextIndex = (currentTrackIndex + 1) % currentPlaylist.length;
+      currentTrackIndex = nextIndex;
+      playTrackCard(currentPlaylist[currentTrackIndex]);
+    }
   });
 }
 

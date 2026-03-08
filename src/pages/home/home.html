@@ -274,13 +274,25 @@
                         </div>
                 </div>
                 <div class="player-center">
+                        <button class="player-btn player-btn-secondary" id="playerPrev" aria-label="Previous track">
+                                <i class="fa-solid fa-backward-step"></i>
+                        </button>
                         <button class="player-btn" id="playerPlayPause" aria-label="Play / Pause">
                                 <i class="fa-solid fa-play"></i>
+                        </button>
+                        <button class="player-btn player-btn-secondary" id="playerNext" aria-label="Next track">
+                                <i class="fa-solid fa-forward-step"></i>
                         </button>
                 </div>
                 <div class="player-right">
                         <div class="player-progress">
                                 <div class="player-progress-fill"></div>
+                        </div>
+                        <div class="player-volume">
+                                <button class="player-btn player-btn-icon" id="playerVolumeBtn" aria-label="Volume">
+                                        <i class="fa-solid fa-volume-high" id="playerVolumeIcon"></i>
+                                </button>
+                                <input type="range" class="player-volume-range" id="playerVolume" min="0" max="100" value="100" aria-label="Volume">
                         </div>
                 </div>
         </div>
