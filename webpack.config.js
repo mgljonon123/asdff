@@ -59,6 +59,6 @@ export default {
     },
     compress: true,
     port: 4000,
-    open: ["login.html"],
+    open: ["home.html"],
   },
 };
